@@ -10,6 +10,6 @@ type Shortlink struct {
 	LongURL  string
 	Slug     string `grom:"uniqueIndex"`
 	ShortURL string
-	UserID   uint
+	UserID   *uint
 	User     auth.User `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
