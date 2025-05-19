@@ -6,6 +6,7 @@ import (
 	"github.com/joho/godotenv"
 	"goShortURL/src/auth"
 	"goShortURL/src/database"
+	"goShortURL/src/shortlink"
 	"time"
 )
 
@@ -21,12 +22,14 @@ func init() {
 
 	database.ConnectDatabase()
 	auth.SyncModels()
+	shortlink.SyncModels()
 }
 
 func main() {
 	router := gin.Default()
-	auth.RegisterRoutes(router)
 	router.GET("/health-check", healthCheck)
+	auth.Routers(router)
+	shortlink.Routers(router)
 
 	err := router.Run("localhost:8081")
 	if err != nil {
