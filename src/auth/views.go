@@ -77,3 +77,19 @@ func signUp(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "User created successfully"})
 }
+
+func userDetails(c *gin.Context) {
+	value, exist := c.Get("user")
+
+	if !exist {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+	user := value.(User)
+
+	c.JSON(http.StatusOK, gin.H{
+		"userID":    user.ID,
+		"userName":  user.Name,
+		"userEmail": user.Email,
+	})
+}
