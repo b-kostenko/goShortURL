@@ -4,15 +4,14 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"goShortURL/internal/database"
-	"goShortURL/src/auth"
-	"goShortURL/src/shortlink"
-	"time"
+	"goShortURL/internal/api/handlers"
+	"goShortURL/internal/api/middleware"
+	"goShortURL/internal/database/postgres"
+	"goShortURL/internal/models"
+	"goShortURL/internal/repository"
+	"goShortURL/internal/services"
+	"log"
 )
-
-func healthCheck(c *gin.Context) {
-	c.JSON(200, gin.H{"status": "OK", "code": 200, "time": time.Now()})
-}
 
 func init() {
 	err := godotenv.Load()
@@ -20,18 +19,28 @@ func init() {
 		fmt.Println("Error loading .env file")
 	}
 
-	database.ConnectDatabase()
-	auth.SyncModels()
-	shortlink.SyncModels()
 }
 
 func main() {
+	db, err := postgres.ConnectDatabase()
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	err = db.AutoMigrate(&models.User{})
+	if err != nil {
+		log.Fatalf("Failed to migrate models: %v", err)
+	}
 	router := gin.Default()
-	router.GET("/health-check", healthCheck)
-	auth.Routers(router)
-	shortlink.Routers(router)
+	userRepo := repository.NewUserRepository(db)
+	authService := services.NewAuthService(userRepo)
+	handler := handlers.NewHandler(authService, userRepo)
 
-	err := router.Run("localhost:8081")
+	router.GET("/health-check", handlers.HealthCheck)
+	router.POST("/auth/sign-in", handler.SignIn)
+	router.POST("/auth/sign-up", handler.SignUp)
+	router.GET("/auth/me", middleware.RequireAuthMiddleware, handler.UserDetails)
+
+	err = router.Run("localhost:8081")
 	if err != nil {
 		panic(err)
 	}
