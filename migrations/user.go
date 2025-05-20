@@ -1,6 +1,8 @@
-package auth
+package migrations
 
-import "goShortURL/src/database"
+import (
+	"goShortURL/internal/database"
+)
 
 func SyncModels() {
 	err := database.DB.AutoMigrate(&User{})

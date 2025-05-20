@@ -1,10 +1,8 @@
-package auth
+package router
 
-import (
-	"github.com/gin-gonic/gin"
-)
+import "github.com/gin-gonic/gin"
 
-func Routers(router *gin.Engine) {
+func AuthRouters(router *gin.Engine) {
 	auth := router.Group("/auth")
 	{
 		auth.POST("/sign-in", signIn)

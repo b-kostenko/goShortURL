@@ -1,9 +1,9 @@
-package auth
+package handlers
 
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
-	"goShortURL/src/database"
+	"goShortURL/internal/database"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
@@ -87,9 +87,5 @@ func userDetails(c *gin.Context) {
 	}
 	user := value.(User)
 
-	c.JSON(http.StatusOK, gin.H{
-		"userID":    user.ID,
-		"userName":  user.Name,
-		"userEmail": user.Email,
-	})
+	c.JSON(http.StatusOK, user)
 }

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"goShortURL/internal/database"
 	"goShortURL/src/auth"
-	"goShortURL/src/database"
 	"goShortURL/src/shortlink"
 	"time"
 )

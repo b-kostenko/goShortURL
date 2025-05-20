@@ -1,4 +1,4 @@
-package auth
+package dto
 
 type UserInputSchema struct {
 	Name     string `json:"name"`
